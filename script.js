@@ -499,6 +499,115 @@
     ring.rotation.x = Math.PI * 0.2;
     scene.add(ring);
 
+    // Lighting for matte-plastic controller
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.35);
+    scene.add(ambientLight);
+    const dirLight = new THREE.DirectionalLight(0xffffff, 0.9);
+    dirLight.position.set(3, 5, 4);
+    scene.add(dirLight);
+    const rimLight = new THREE.DirectionalLight(0xff4d7e, 0.4);
+    rimLight.position.set(-4, -2, -3);
+    scene.add(rimLight);
+
+    // Controller — built from primitives
+    const cMat = new THREE.MeshPhongMaterial({
+      color: 0xff4d7e,
+      shininess: 12,
+      specular: new THREE.Color(0x1a0008),
+    });
+    const cMatDark = new THREE.MeshPhongMaterial({
+      color: 0xcc1a4a,
+      shininess: 8,
+      specular: new THREE.Color(0x0a0005),
+    });
+
+    function makeController() {
+      const g = new THREE.Group();
+
+      // ── Body ──
+      const body = new THREE.Mesh(new THREE.BoxGeometry(0.32, 0.16, 0.07), cMat);
+      g.add(body);
+
+      // Beveled body ends (small cylinders capping left/right)
+      [-.16, .16].forEach(x => {
+        const cap = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 0.07, 16), cMat);
+        cap.rotation.z = Math.PI / 2;
+        cap.position.set(x, 0, 0);
+        g.add(cap);
+      });
+
+      // ── Grips (handles) ──
+      const gripGeo = new THREE.CylinderGeometry(0.055, 0.044, 0.18, 12);
+      [[-0.1, -0.13, 0.22], [0.1, -0.13, -0.22]].forEach(([x, y, rz]) => {
+        const grip = new THREE.Mesh(gripGeo, cMat);
+        grip.position.set(x, y, 0);
+        grip.rotation.z = rz * 0.3;
+        g.add(grip);
+      });
+
+      // ── Shoulder bumpers ──
+      const bumpGeo = new THREE.BoxGeometry(0.1, 0.03, 0.04);
+      [[-0.1, 0.09], [0.1, 0.09]].forEach(([x, y]) => {
+        const b = new THREE.Mesh(bumpGeo, cMatDark);
+        b.position.set(x, y, 0.015);
+        g.add(b);
+      });
+
+      // ── D-pad ──
+      const dH = new THREE.Mesh(new THREE.BoxGeometry(0.09, 0.026, 0.015), cMatDark);
+      dH.position.set(-0.1, 0.01, 0.042);
+      g.add(dH);
+      const dV = new THREE.Mesh(new THREE.BoxGeometry(0.026, 0.09, 0.015), cMatDark);
+      dV.position.set(-0.1, 0.01, 0.042);
+      g.add(dV);
+
+      // ── Face buttons (4) ──
+      const btnGeo = new THREE.CylinderGeometry(0.018, 0.018, 0.018, 10);
+      [[0.12, 0.03], [0.145, 0.0], [0.12, -0.03], [0.095, 0.0]].forEach(([x, y]) => {
+        const btn = new THREE.Mesh(btnGeo, cMatDark);
+        btn.rotation.x = Math.PI / 2;
+        btn.position.set(x, y, 0.044);
+        g.add(btn);
+      });
+
+      // ── Analog sticks ──
+      const stickBase = new THREE.CylinderGeometry(0.028, 0.028, 0.012, 12);
+      const stickTop  = new THREE.CylinderGeometry(0.022, 0.022, 0.01, 12);
+      [[-0.06, -0.03], [0.04, -0.05]].forEach(([x, y]) => {
+        const sb = new THREE.Mesh(stickBase, cMatDark);
+        sb.rotation.x = Math.PI / 2;
+        sb.position.set(x, y, 0.04);
+        g.add(sb);
+        const st = new THREE.Mesh(stickTop, cMat);
+        st.rotation.x = Math.PI / 2;
+        st.position.set(x, y, 0.052);
+        g.add(st);
+      });
+
+      // ── Center button ──
+      const center = new THREE.Mesh(new THREE.CylinderGeometry(0.022, 0.022, 0.015, 14), cMatDark);
+      center.rotation.x = Math.PI / 2;
+      center.position.set(0.01, 0.02, 0.043);
+      g.add(center);
+
+      g.scale.setScalar(0.38);
+      return g;
+    }
+
+    const controller = makeController();
+
+    // Pivot matches the magenta ring's orbital plane and speed
+    const ctrlPivot = new THREE.Group();
+    ctrlPivot.rotation.x = Math.PI * 0.2;
+    // Start at a visually interesting angle offset from particles
+    ctrlPivot.rotation.y = Math.PI * 0.65;
+    controller.position.set(1.82, 0, 0);
+    // Slight tilt so it doesn't face camera flat
+    controller.rotation.y = Math.PI * 0.15;
+    controller.rotation.z = Math.PI * 0.1;
+    ctrlPivot.add(controller);
+    scene.add(ctrlPivot);
+
     function resize(){
       const w = canvas.clientWidth, h = canvas.clientHeight;
       renderer.setSize(w, h, false);
@@ -522,7 +631,8 @@
       globe.rotation.x   = mouse.y;
       inner.rotation.y   = globe.rotation.y * 0.8;
       points.rotation.y += 0.0007;
-      ring.rotation.y   += 0.003;
+      ring.rotation.y      += 0.003;
+      ctrlPivot.rotation.y += 0.003;
       scene.rotation.y   = mouse.x * 0.6;
       scene.rotation.x   = mouse.y * 0.3;
       renderer.render(scene, camera);
