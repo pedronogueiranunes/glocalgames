@@ -149,8 +149,8 @@ em{ font-style: normal; color: var(--accent); }
 .nav.is-scrolled{ background: rgba(8,8,11,.75); border-bottom-color: var(--line); }
 
 .nav__brand{ display:flex; align-items:center; }
-.nav__logo{ display: block; height: 30px; width: auto; }
-.footer__logo{ display: block; height: 34px; width: auto; margin-bottom: 4px; }
+.nav__logo{ display: block; height: 38px; width: auto; }
+.footer__logo{ display: block; height: 43px; width: auto; margin-bottom: 4px; }
 
 .nav__links{ display: flex; gap: 28px; }
 .nav__links a{
