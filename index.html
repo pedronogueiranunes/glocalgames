@@ -92,8 +92,20 @@
         <span class="lang__slot" data-lang="en">EN</span>
       </button>
       <a href="#foryou" class="btn btn--sm" data-i18n="nav.cta">Explorar o Painel</a>
+      <button class="nav__burger" id="nav-burger" aria-label="Open menu" aria-expanded="false" type="button">
+        <span></span><span></span><span></span>
+      </button>
     </div>
   </header>
+
+  <!-- Mobile drawer (mirrors nav__links) -->
+  <nav class="nav__drawer" id="nav-drawer" aria-label="mobile">
+    <a href="#about"  data-i18n="nav.about">Sobre</a>
+    <a href="#icg"    data-i18n="nav.icg">Identidade</a>
+    <a href="#igc"    data-i18n="nav.igc">Glocalização</a>
+    <a href="#idi"    data-i18n="nav.idi">Desempenho</a>
+    <a href="#foryou" data-i18n="nav.foryou">Para você</a>
+  </nav>
 
   <!-- ===================== 01 HERO ===================== -->
   <section class="hero" id="hero" data-section="01">
@@ -185,14 +197,14 @@
     </div>
 
     <div class="context-bars" aria-hidden="true">
-      <div class="cb cb--cn" style="--w:24%"><span>CN</span><i></i><b>$47B</b></div>
-      <div class="cb cb--us" style="--w:23%"><span>US</span><i></i><b>$46.1B</b></div>
-      <div class="cb cb--jp" style="--w:10%"><span>JP</span><i></i><b>$19B</b></div>
-      <div class="cb cb--kr" style="--w:4%"><span>KR</span><i></i><b>$7B</b></div>
-      <div class="cb cb--sg" style="--w:2.5%"><span>SG</span><i></i><b>$5B</b></div>
-      <div class="cb cb--br" style="--w:1.8%"><span>BR</span><i></i><b>$3.6B</b></div>
-      <div class="cb cb--mx" style="--w:1.5%"><span>MX</span><i></i><b>$3B</b></div>
-      <div class="cb cb--za" style="--w:0.6%"><span>ZA</span><i></i><b>$1.2B</b></div>
+      <div class="cb cb--cn" style="--w:48%"><span><img class="cb__flag" src="https://flagcdn.com/w40/cn.png" alt="China">CN</span><i></i><b>$47B</b></div>
+      <div class="cb cb--us" style="--w:46%"><span><img class="cb__flag" src="https://flagcdn.com/w40/us.png" alt="United States">US</span><i></i><b>$46.1B</b></div>
+      <div class="cb cb--jp" style="--w:20%"><span><img class="cb__flag" src="https://flagcdn.com/w40/jp.png" alt="Japan">JP</span><i></i><b>$19B</b></div>
+      <div class="cb cb--kr" style="--w:8%"><span><img class="cb__flag" src="https://flagcdn.com/w40/kr.png" alt="South Korea">KR</span><i></i><b>$7B</b></div>
+      <div class="cb cb--sg" style="--w:5%"><span><img class="cb__flag" src="https://flagcdn.com/w40/sg.png" alt="Singapore">SG</span><i></i><b>$5B</b></div>
+      <div class="cb cb--br" style="--w:3.6%"><span><img class="cb__flag" src="https://flagcdn.com/w40/br.png" alt="Brazil">BR</span><i></i><b>$3.6B</b></div>
+      <div class="cb cb--mx" style="--w:3%"><span><img class="cb__flag" src="https://flagcdn.com/w40/mx.png" alt="Mexico">MX</span><i></i><b>$3B</b></div>
+      <div class="cb cb--za" style="--w:1.2%"><span><img class="cb__flag" src="https://flagcdn.com/w40/za.png" alt="South Africa">ZA</span><i></i><b>$1.2B</b></div>
     </div>
   </section>
 
@@ -339,25 +351,33 @@
 
     <div class="cases-grid">
       <article class="case">
-        <div class="case__cover"><span>Case 01</span></div>
+        <div class="case__cover">
+          <img src="https://cdn.akamai.steamstatic.com/steam/apps/907760/library_600x900.jpg" alt="Árida: Backland's Awakening cover" loading="lazy" />
+        </div>
         <h3 class="case__name">Árida</h3>
         <span class="case__meta">BR · 2019</span>
         <p class="case__desc" data-i18n="cases.c1">Sertão nordestino como experiência central — sobrevivência, memória e cultura.</p>
       </article>
       <article class="case">
-        <div class="case__cover"><span>Case 02</span></div>
+        <div class="case__cover">
+          <img src="https://cdn.akamai.steamstatic.com/steam/apps/2358720/library_600x900.jpg" alt="Black Myth: Wukong cover" loading="lazy" />
+        </div>
         <h3 class="case__name">Black Myth: Wukong</h3>
         <span class="case__meta">CN · 2024</span>
         <p class="case__desc" data-i18n="cases.c2">Mitologia chinesa como motor narrativo e estético global.</p>
       </article>
       <article class="case">
-        <div class="case__cover"><span>Case 03</span></div>
+        <div class="case__cover">
+          <img src="https://cdn.akamai.steamstatic.com/steam/apps/623640/library_600x900.jpg" alt="Mulaka cover" loading="lazy" />
+        </div>
         <h3 class="case__name">Mulaka</h3>
         <span class="case__meta">MX · 2018</span>
         <p class="case__desc" data-i18n="cases.c3">Cultura Tarahumara (Rarámuri) traduzida para uma aventura 3D.</p>
       </article>
       <article class="case">
-        <div class="case__cover"><span>Case 04</span></div>
+        <div class="case__cover">
+          <img src="https://cdn.akamai.steamstatic.com/steam/apps/730390/library_600x900.jpg" alt="Raji: An Ancient Epic cover" loading="lazy" />
+        </div>
         <h3 class="case__name">Raji: An Ancient Epic</h3>
         <span class="case__meta">IN · 2020</span>
         <p class="case__desc" data-i18n="cases.c4">Mitologia hindu e arte Pahari em um action-adventure premiado.</p>
@@ -497,7 +517,7 @@
   <!-- Libraries -->
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.14/dist/lenis.min.js"></script>
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="script.js" defer></script>
 </body>

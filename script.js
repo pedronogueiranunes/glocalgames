@@ -309,42 +309,6 @@
 
 
   /* -------------------------------------------------
-     2. Lenis smooth scroll
-  ------------------------------------------------- */
-  let lenis;
-  function initLenis(){
-    if (typeof Lenis === 'undefined') return;
-    lenis = new Lenis({
-      // Snappier, more responsive smooth-scroll:
-      duration: 0.9,
-      lerp: 0.12,
-      easing: (t) => 1 - Math.pow(1 - t, 3), // cubic-out — quick settle
-      smoothWheel: true,
-      wheelMultiplier: 1.25,
-      touchMultiplier: 1.5,
-    });
-
-    // Drive Lenis from gsap.ticker (inside initGSAP) if GSAP is present.
-    // Otherwise fall back to our own RAF loop so scroll still works.
-    if (typeof gsap === 'undefined'){
-      function raf(t){ lenis.raf(t); requestAnimationFrame(raf); }
-      requestAnimationFrame(raf);
-    }
-
-    // Anchor links
-    document.querySelectorAll('a[href^="#"]').forEach(a => {
-      a.addEventListener('click', (e) => {
-        const id = a.getAttribute('href');
-        if (id.length <= 1) return;
-        const target = document.querySelector(id);
-        if (!target) return;
-        e.preventDefault();
-        lenis.scrollTo(target, { offset: -70, duration: 1.0 });
-      });
-    });
-  }
-
-  /* -------------------------------------------------
      3. GSAP reveals & text staggers
   ------------------------------------------------- */
   function initGSAP(){
@@ -357,13 +321,6 @@
       return;
     }
     gsap.registerPlugin(ScrollTrigger);
-
-    // Sync ScrollTrigger with Lenis
-    if (lenis){
-      lenis.on('scroll', ScrollTrigger.update);
-      gsap.ticker.add((time)=> lenis.raf(time * 1000));
-      gsap.ticker.lagSmoothing(0);
-    }
 
     // Nav scrolled state
     ScrollTrigger.create({
@@ -399,23 +356,21 @@
         return;
       }
       // Auto split (word-level) if no .line markup present
+      // Use opacity+y fade to avoid descender clipping from overflow:hidden
       const text = el.innerText.trim();
       const words = text.split(/\s+/);
       el.innerHTML = words.map(w =>
-        `<span class="w"><span>${w}</span></span>`
+        `<span class="w" style="display:inline-block">${w}</span>`
       ).join(' ');
-      const wrap = el.querySelectorAll('.w');
-      wrap.forEach(w => w.style.display = 'inline-block');
-      wrap.forEach(w => w.style.overflow = 'hidden');
-      wrap.forEach(w => { const inner = w.firstElementChild; inner.style.display = 'inline-block'; inner.style.transform = 'translateY(110%)'; });
-      gsap.to(el.querySelectorAll('.w > span'), {
-        yPercent: 0, duration: 1, ease: 'expo.out', stagger: 0.04,
-        scrollTrigger: { trigger: el, start: 'top 85%' }
-      });
+      gsap.fromTo(el.querySelectorAll('.w'),
+        { y: 20, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.7, ease: 'power3.out', stagger: 0.05,
+          scrollTrigger: { trigger: el, start: 'top 85%' } });
     });
 
     // Generic fade-in for primary content blocks
-    const blocks = document.querySelectorAll('.lede, .pillar, .case, .impl-card, .hud__item, .metric, .top-insight, .flourish-slot, .acc, .fy-actions, .context-bars');
+    // Exclude children of stagger-grid parents to avoid double-animation
+    const blocks = document.querySelectorAll('.lede, .hud__item, .metric, .top-insight, .flourish-slot, .acc, .fy-actions, .context-bars, .impl-card');
     blocks.forEach(b => {
       gsap.fromTo(b,
         { y: 30, opacity: 0 },
@@ -425,7 +380,7 @@
         });
     });
 
-    // Stagger groups inside grids
+    // Stagger groups inside grids (handles .pillar and .case — not double-animated above)
     gsap.utils.toArray('.pillars').forEach(grid => {
       gsap.fromTo(grid.children,
         { y: 40, opacity: 0 },
@@ -460,7 +415,15 @@
           onEnter: () => animateNumber(el, 0, to, 1400)
         });
       } else {
-        animateNumber(el, 0, to, 1400);
+        // IntersectionObserver fallback — only fires when element enters viewport
+        const io = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (!entry.isIntersecting) return;
+            animateNumber(el, 0, to, 1400);
+            io.disconnect();
+          });
+        }, { threshold: 0.1 });
+        io.observe(el);
       }
     });
   }
@@ -542,7 +505,7 @@
       camera.aspect = w / h;
       camera.updateProjectionMatrix();
     }
-    resize();
+    requestAnimationFrame(resize);
     window.addEventListener('resize', resize);
 
     // parallax with pointer
@@ -571,11 +534,49 @@
   /* -------------------------------------------------
      6. Boot
   ------------------------------------------------- */
+  function initMobileNav(){
+    const burger = document.getElementById('nav-burger');
+    const drawer = document.getElementById('nav-drawer');
+    if (!burger || !drawer) return;
+
+    burger.addEventListener('click', () => {
+      const open = drawer.classList.toggle('is-open');
+      burger.classList.toggle('is-open', open);
+      burger.setAttribute('aria-expanded', String(open));
+      document.body.style.overflow = open ? 'hidden' : '';
+    });
+
+    // Close drawer when any link inside it is clicked
+    drawer.querySelectorAll('a').forEach(a => {
+      a.addEventListener('click', () => {
+        drawer.classList.remove('is-open');
+        burger.classList.remove('is-open');
+        burger.setAttribute('aria-expanded', 'false');
+        document.body.style.overflow = '';
+      });
+    });
+  }
+
+  function initAnchorScroll(){
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+      a.addEventListener('click', (e) => {
+        const id = a.getAttribute('href');
+        if (id.length <= 1) return;
+        const target = document.querySelector(id);
+        if (!target) return;
+        e.preventDefault();
+        const top = target.getBoundingClientRect().top + window.scrollY - 70;
+        window.scrollTo({ top, behavior: 'smooth' });
+      });
+    });
+  }
+
   document.addEventListener('DOMContentLoaded', () => {
-    initLenis();
     initGSAP();
+    initAnchorScroll();
     initCounters();
     initHero3D();
+    initMobileNav();
 
     const bd = document.getElementById('buildDate');
     if (bd){
