@@ -524,6 +524,24 @@ em{ font-style: normal; color: var(--accent); }
   margin-top: 48px; display: flex; flex-wrap: wrap; gap: 14px;
 }
 
+/* ---- PARTNERS ---- */
+.partners-grid{
+  display: flex; flex-wrap: wrap; align-items: center;
+  gap: 40px 56px; margin-top: 56px;
+}
+.partner-logo{
+  display: flex; align-items: center; justify-content: center;
+  opacity: .55; transition: opacity .3s;
+  filter: brightness(0) invert(1);
+}
+.partner-logo:hover{ opacity: 1; }
+.partner-logo img{ height: 44px; width: auto; display: block; }
+
+@media (max-width: 640px){
+  .partners-grid{ gap: 28px 36px; }
+  .partner-logo img{ height: 32px; }
+}
+
 /* ---- FOOTER ---- */
 .footer{
   position: relative; z-index: 2;

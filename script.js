@@ -123,7 +123,11 @@
       'fy.meth':     'Metodologia',
       'fy.contact':  'Entrar em contato →',
 
+      'partners.tag':   'Parceiros',
+      'partners.title': 'Realização e apoio.',
+
       'footer.tag':     'Identidade cultural e performance no Sul global.',
+
       'footer.project': 'Projeto',
       'footer.axes':    'Eixos',
       'footer.icg':     'Identidade Cultural · ICG',
@@ -245,6 +249,9 @@
       'fy.paper':    'Read the paper',
       'fy.meth':     'Methodology',
       'fy.contact':  'Get in touch →',
+
+      'partners.tag':   'Partners',
+      'partners.title': 'Supported by.',
 
       'footer.tag':     'Cultural identity and performance in the Global South.',
       'footer.project': 'Project',
