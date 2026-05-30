@@ -538,7 +538,7 @@
     let ctrlWrapper = null;
     if (typeof THREE.OBJLoader !== 'undefined') {
       const loader = new THREE.OBJLoader();
-      loader.load('/assets/controller.obj', (obj) => {
+      loader.load('assets/controller.obj', (obj) => {
         obj.traverse(child => {
           if (child.isMesh) child.material = cMat;
         });
