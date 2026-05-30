@@ -557,7 +557,7 @@
 
         const wrapper = new THREE.Group();
         wrapper.add(obj);
-        wrapper.position.set(1.82, 0, 0);
+        wrapper.position.set(1.58, 0, 0);
         // Initial orientation — slightly facing the camera
         wrapper.rotation.x = Math.PI * 0.1;
         wrapper.rotation.z = Math.PI * 0.08;
