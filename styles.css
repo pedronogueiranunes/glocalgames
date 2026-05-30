@@ -527,19 +527,23 @@ em{ font-style: normal; color: var(--accent); }
 /* ---- PARTNERS ---- */
 .partners-grid{
   display: flex; flex-wrap: wrap; align-items: center;
-  gap: 40px 56px; margin-top: 56px;
+  gap: 16px; margin-top: 56px;
 }
 .partner-logo{
   display: flex; align-items: center; justify-content: center;
-  opacity: .55; transition: opacity .3s;
-  filter: brightness(0) invert(1);
+  padding: 18px 24px;
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 12px;
+  opacity: .7; transition: opacity .3s, background .3s;
 }
-.partner-logo:hover{ opacity: 1; }
-.partner-logo img{ height: 44px; width: auto; display: block; }
+.partner-logo:hover{ opacity: 1; background: rgba(255,255,255,.1); }
+.partner-logo img{ height: 40px; width: auto; display: block; }
 
 @media (max-width: 640px){
-  .partners-grid{ gap: 28px 36px; }
-  .partner-logo img{ height: 32px; }
+  .partners-grid{ gap: 12px; }
+  .partner-logo{ padding: 14px 18px; }
+  .partner-logo img{ height: 28px; }
 }
 
 /* ---- FOOTER ---- */
