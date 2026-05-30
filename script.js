@@ -524,73 +524,75 @@
     function makeController() {
       const g = new THREE.Group();
 
-      // ── Body ──
-      const body = new THREE.Mesh(new THREE.BoxGeometry(0.32, 0.16, 0.07), cMat);
+      // ── PS1 style: wide flat body, straight grips, stacked shoulder buttons ──
+
+      // Main flat body — wide trapezoid approximated with a box
+      const body = new THREE.Mesh(new THREE.BoxGeometry(0.52, 0.15, 0.055), cMat);
       g.add(body);
 
-      // Beveled body ends (small cylinders capping left/right)
-      [-.16, .16].forEach(x => {
-        const cap = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 0.07, 16), cMat);
+      // Round caps on each end of body
+      [-0.26, 0.26].forEach(x => {
+        const cap = new THREE.Mesh(new THREE.CylinderGeometry(0.075, 0.075, 0.055, 18), cMat);
         cap.rotation.z = Math.PI / 2;
         cap.position.set(x, 0, 0);
         g.add(cap);
       });
 
-      // ── Grips (handles) ──
-      const gripGeo = new THREE.CylinderGeometry(0.055, 0.044, 0.18, 12);
-      [[-0.1, -0.13, 0.22], [0.1, -0.13, -0.22]].forEach(([x, y, rz]) => {
-        const grip = new THREE.Mesh(gripGeo, cMat);
-        grip.position.set(x, y, 0);
-        grip.rotation.z = rz * 0.3;
+      // ── Straight parallel grips (PS1 grips hang straight down) ──
+      const gripW = 0.095, gripH = 0.22, gripD = 0.052;
+      [-0.16, 0.16].forEach(x => {
+        const grip = new THREE.Mesh(new THREE.BoxGeometry(gripW, gripH, gripD), cMat);
+        grip.position.set(x, -0.185, 0);
         g.add(grip);
+        // Round bottom of grip
+        const gripBot = new THREE.Mesh(new THREE.CylinderGeometry(gripW / 2, gripW / 2, gripD, 14), cMat);
+        gripBot.rotation.z = Math.PI / 2;
+        gripBot.rotation.y = Math.PI / 2;
+        gripBot.position.set(x, -0.185 - gripH / 2, 0);
+        g.add(gripBot);
       });
 
-      // ── Shoulder bumpers ──
-      const bumpGeo = new THREE.BoxGeometry(0.1, 0.03, 0.04);
-      [[-0.1, 0.09], [0.1, 0.09]].forEach(([x, y]) => {
-        const b = new THREE.Mesh(bumpGeo, cMatDark);
-        b.position.set(x, y, 0.015);
-        g.add(b);
+      // ── Stacked L1/L2 and R1/R2 shoulder buttons ──
+      [[-0.21, 'L'], [0.21, 'R']].forEach(([x]) => {
+        // Lower button (L1/R1) — on top face, outer edge
+        const s1 = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.028, 0.04), cMatDark);
+        s1.position.set(x, 0.089, -0.008);
+        g.add(s1);
+        // Upper button (L2/R2) — slightly inset, sits above
+        const s2 = new THREE.Mesh(new THREE.BoxGeometry(0.088, 0.022, 0.035), cMatDark);
+        s2.position.set(x, 0.089, -0.035);
+        g.add(s2);
       });
 
-      // ── D-pad ──
-      const dH = new THREE.Mesh(new THREE.BoxGeometry(0.09, 0.026, 0.015), cMatDark);
-      dH.position.set(-0.1, 0.01, 0.042);
+      // ── D-pad (left side) — plus/cross shape ──
+      const dpx = -0.135, dpy = 0.01, dpz = 0.033;
+      const dH = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.028, 0.016), cMatDark);
+      dH.position.set(dpx, dpy, dpz);
       g.add(dH);
-      const dV = new THREE.Mesh(new THREE.BoxGeometry(0.026, 0.09, 0.015), cMatDark);
-      dV.position.set(-0.1, 0.01, 0.042);
+      const dV = new THREE.Mesh(new THREE.BoxGeometry(0.028, 0.1, 0.016), cMatDark);
+      dV.position.set(dpx, dpy, dpz);
       g.add(dV);
 
-      // ── Face buttons (4) ──
-      const btnGeo = new THREE.CylinderGeometry(0.018, 0.018, 0.018, 10);
-      [[0.12, 0.03], [0.145, 0.0], [0.12, -0.03], [0.095, 0.0]].forEach(([x, y]) => {
-        const btn = new THREE.Mesh(btnGeo, cMatDark);
+      // ── Face buttons (right side) — 4 circles in diamond layout ──
+      const bGeo = new THREE.CylinderGeometry(0.016, 0.016, 0.016, 12);
+      const bR = 0.034;
+      [[0, bR], [bR, 0], [0, -bR], [-bR, 0]].forEach(([ox, oy]) => {
+        const btn = new THREE.Mesh(bGeo, cMatDark);
         btn.rotation.x = Math.PI / 2;
-        btn.position.set(x, y, 0.044);
+        btn.position.set(0.14 + ox, 0.01 + oy, 0.033);
         g.add(btn);
       });
 
-      // ── Analog sticks ──
-      const stickBase = new THREE.CylinderGeometry(0.028, 0.028, 0.012, 12);
-      const stickTop  = new THREE.CylinderGeometry(0.022, 0.022, 0.01, 12);
-      [[-0.06, -0.03], [0.04, -0.05]].forEach(([x, y]) => {
-        const sb = new THREE.Mesh(stickBase, cMatDark);
-        sb.rotation.x = Math.PI / 2;
-        sb.position.set(x, y, 0.04);
-        g.add(sb);
-        const st = new THREE.Mesh(stickTop, cMat);
-        st.rotation.x = Math.PI / 2;
-        st.position.set(x, y, 0.052);
-        g.add(st);
+      // ── Select / Start (centre, small oval buttons) ──
+      const smGeo = new THREE.CylinderGeometry(0.014, 0.014, 0.012, 10);
+      [-0.03, 0.03].forEach(x => {
+        const sm = new THREE.Mesh(smGeo, cMatDark);
+        sm.rotation.x = Math.PI / 2;
+        sm.position.set(x, 0.018, 0.033);
+        g.add(sm);
       });
 
-      // ── Center button ──
-      const center = new THREE.Mesh(new THREE.CylinderGeometry(0.022, 0.022, 0.015, 14), cMatDark);
-      center.rotation.x = Math.PI / 2;
-      center.position.set(0.01, 0.02, 0.043);
-      g.add(center);
-
-      g.scale.setScalar(0.38);
+      g.scale.setScalar(0.36);
       return g;
     }
 
