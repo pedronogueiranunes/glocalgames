@@ -528,13 +528,14 @@
       specular: new THREE.Color(0x0a0005),
     });
 
-    // Pivot matches the magenta ring's orbital plane and speed
+    // Controller pivot — mirrors ring's tilt exactly.
+    // We sync rotation.y to ring.rotation.y each tick so the
+    // controller stays locked on the same orbital path.
     const ctrlPivot = new THREE.Group();
-    ctrlPivot.rotation.x = Math.PI * 0.2;
-    ctrlPivot.rotation.y = Math.PI * 0.65;
+    ctrlPivot.rotation.x = ring.rotation.x; // same tilt as ring
+    ctrlPivot.rotation.y = Math.PI * 0.25;  // start offset so it's visible
     scene.add(ctrlPivot);
 
-    // Load OBJ model
     let ctrlWrapper = null;
     if (typeof THREE.OBJLoader !== 'undefined') {
       const loader = new THREE.OBJLoader();
@@ -543,13 +544,11 @@
           if (child.isMesh) child.material = cMat;
         });
 
-        // Centre the model using its bounding box
         const box = new THREE.Box3().setFromObject(obj);
         const centre = new THREE.Vector3();
         box.getCenter(centre);
         obj.position.sub(centre);
 
-        // Scale so the longest axis fits ~0.57 scene units (50% bigger than before)
         const size = new THREE.Vector3();
         box.getSize(size);
         const maxDim = Math.max(size.x, size.y, size.z);
@@ -557,10 +556,8 @@
 
         const wrapper = new THREE.Group();
         wrapper.add(obj);
-        wrapper.position.set(1.58, 0, 0);
-        // Initial orientation — slightly facing the camera
-        wrapper.rotation.x = Math.PI * 0.1;
-        wrapper.rotation.z = Math.PI * 0.08;
+        // Place at the ring's orbital radius along the pivot's X axis
+        wrapper.position.set(1.9, 0, 0);
         ctrlPivot.add(wrapper);
         ctrlWrapper = wrapper;
       });
@@ -589,8 +586,8 @@
       globe.rotation.x   = mouse.y;
       inner.rotation.y   = globe.rotation.y * 0.8;
       points.rotation.y += 0.0007;
-      ring.rotation.y      += 0.003;
-      ctrlPivot.rotation.y += 0.003;
+      ring.rotation.y    += 0.003;
+      ctrlPivot.rotation.y = ring.rotation.y + Math.PI * 0.25;
       if (ctrlWrapper){
         ctrlWrapper.rotation.x += 0.004;   // slow forward tumble
         ctrlWrapper.rotation.y += 0.0025;  // gentle yaw
