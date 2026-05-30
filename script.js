@@ -535,14 +535,12 @@
     scene.add(ctrlPivot);
 
     // Load OBJ model
+    let ctrlWrapper = null;
     if (typeof THREE.OBJLoader !== 'undefined') {
       const loader = new THREE.OBJLoader();
       loader.load('/assets/controller.obj', (obj) => {
-        // Apply pink matte-plastic material to every mesh
         obj.traverse(child => {
-          if (child.isMesh) {
-            child.material = cMat;
-          }
+          if (child.isMesh) child.material = cMat;
         });
 
         // Centre the model using its bounding box
@@ -551,21 +549,20 @@
         box.getCenter(centre);
         obj.position.sub(centre);
 
-        // Scale so the longest axis fits ~0.38 scene units
+        // Scale so the longest axis fits ~0.57 scene units (50% bigger than before)
         const size = new THREE.Vector3();
         box.getSize(size);
         const maxDim = Math.max(size.x, size.y, size.z);
-        obj.scale.setScalar(0.38 / maxDim);
+        obj.scale.setScalar(0.57 / maxDim);
 
-        // Slight tilt so it reads well as it orbits
-        obj.rotation.x = Math.PI * 0.1;
-        obj.rotation.z = Math.PI * 0.08;
-
-        // Re-centre after scale (scale doesn't move the position offset)
         const wrapper = new THREE.Group();
         wrapper.add(obj);
         wrapper.position.set(1.82, 0, 0);
+        // Initial orientation — slightly facing the camera
+        wrapper.rotation.x = Math.PI * 0.1;
+        wrapper.rotation.z = Math.PI * 0.08;
         ctrlPivot.add(wrapper);
+        ctrlWrapper = wrapper;
       });
     }
 
@@ -594,6 +591,11 @@
       points.rotation.y += 0.0007;
       ring.rotation.y      += 0.003;
       ctrlPivot.rotation.y += 0.003;
+      if (ctrlWrapper){
+        ctrlWrapper.rotation.x += 0.004;   // slow forward tumble
+        ctrlWrapper.rotation.y += 0.0025;  // gentle yaw
+        ctrlWrapper.rotation.z += 0.003;   // lazy roll
+      }
       scene.rotation.y   = mouse.x * 0.6;
       scene.rotation.x   = mouse.y * 0.3;
       renderer.render(scene, camera);
