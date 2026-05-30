@@ -25,7 +25,7 @@
       'nav.foryou':  'Para você',
       'nav.cta':     'Explorar o Painel',
 
-      'hero.tag':    'Hero · Intro',
+      'hero.tag':    'Intro',
       'hero.status': 'Dataset v1.0 · ao vivo',
       'hero.title1': 'GLOCAL',
       'hero.title2': 'GAMES',
@@ -148,7 +148,7 @@
       'nav.foryou':  'For you',
       'nav.cta':     'Explore the dashboard',
 
-      'hero.tag':    'Hero · Intro',
+      'hero.tag':    'Intro',
       'hero.status': 'Dataset v1.0 · live',
       'hero.title1': 'GLOCAL',
       'hero.title2': 'GAMES',
