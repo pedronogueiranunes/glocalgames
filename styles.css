@@ -148,10 +148,9 @@ em{ font-style: normal; color: var(--accent); }
 }
 .nav.is-scrolled{ background: rgba(8,8,11,.75); border-bottom-color: var(--line); }
 
-.nav__brand{ display:flex; align-items:center; gap: 10px; font-family: var(--f-head); font-weight:700; letter-spacing: .01em; }
-.nav__mark{ color: var(--accent); font-size: 18px; transform: translateY(-1px); }
-.nav__wordmark{ font-size: 14px; letter-spacing: .18em; }
-.nav__wordmark em{ font-style: normal; color: var(--fg-dim); font-weight: 400; }
+.nav__brand{ display:flex; align-items:center; }
+.nav__logo{ display: block; height: 30px; width: auto; }
+.footer__logo{ display: block; height: 34px; width: auto; margin-bottom: 4px; }
 
 .nav__links{ display: flex; gap: 28px; }
 .nav__links a{
